@@ -1,0 +1,21 @@
+<?xml version='1.0' encoding='utf-8'?>
+<plugin id="com-heymate-plugins-telegramJson" version="0.0.1" 
+    xmlns="http://apache.org/cordova/ns/plugins/1.0" 
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <name>TelegramJson</name>
+    <js-module name="TelegramJson" src="www/TelegramJson.js">
+        <clobbers target="telegramjson" />
+    </js-module>
+    <platform name="ios">
+        <config-file target="config.xml" parent="/*">
+            <feature name="TelegramJson">
+                <param name="ios-package" value="TelegramJson" />
+            </feature>
+        </config-file>
+        <carthage>
+            <cartfile>github "leoMehlig/TDLib-iOS"</cartfile>
+            <framework src="TDLib.framework"/>
+        </carthage>
+        <source-file src="src/ios/td_json_client.swift" />
+    </platform>
+</plugin>
