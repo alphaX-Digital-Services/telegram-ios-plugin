@@ -90,6 +90,54 @@ import TDLib
         )
     }
 
+    @objc(searchPublicChat:)
+    public func searchPublicChat(command: CDVInvokedUrlCommand) {
+        var pluginResult = CDVPluginResult(
+            status: CDVCommandStatus_ERROR,
+            messageAs: "ERROR SEARCH CHAT"
+        )
+
+        let query = command.arguments[0] as! String
+        print(query.count)
+
+        if query.count >= 5 {
+            coordinator!.send(SearchPublicChat(username: query))
+                .done { res in
+                    print(res)
+                    pluginResult = CDVPluginResult(
+                        status: CDVCommandStatus_OK,
+                        messageAs: self.jsonEncode(_obj: res)
+                    )
+                    
+                    self.commandDelegate!.send(
+                        pluginResult,
+                        callbackId: command.callbackId
+                    )
+                }
+                .catch { err in
+                    print(err)
+                    pluginResult = CDVPluginResult(
+                        status: CDVCommandStatus_ERROR,
+                        messageAs: self.jsonEncode(_obj: err as! Encodable)
+                    )
+                    
+                    self.commandDelegate!.send(
+                        pluginResult,
+                        callbackId: command.callbackId
+                    )
+                }
+        } else {
+            pluginResult = CDVPluginResult(
+            status: CDVCommandStatus_ERROR,
+            messageAs: "ERROR => MANY LETTERS IN SEARCH QUERY"
+        )
+            self.commandDelegate!.send(
+                    pluginResult,
+                    callbackId: command.callbackId
+                )
+        }
+    }
+
     @objc(getChats:)
     public func getChats(command: CDVInvokedUrlCommand) {
         var pluginResult = CDVPluginResult(
@@ -204,39 +252,37 @@ import TDLib
                 )
             }
     }
-    
+
     @objc(resendCode:)
     public func resendCode(command: CDVInvokedUrlCommand) {
         var pluginResult = CDVPluginResult(
             status: CDVCommandStatus_ERROR,
             messageAs: "ERROR RESENDING CODE"
         )
-        
+
         coordinator!.send(ResendAuthenticationCode())
-            .done{ res in
-            print("CODE RESENDED")
-                
-            pluginResult = CDVPluginResult(
-            status: CDVCommandStatus_OK,
-            messageAs: "RESENDED!"
+            .done { _ in
+                print("CODE RESENDED")
+
+                pluginResult = CDVPluginResult(
+                    status: CDVCommandStatus_OK,
+                    messageAs: "RESENDED!"
                 )
-                
-            self.commandDelegate!.send(
-                pluginResult,
-                callbackId: command.callbackId
-            )
-                
+
+                self.commandDelegate!.send(
+                    pluginResult,
+                    callbackId: command.callbackId
+                )
             }
-            .catch{err in
+            .catch { err in
                 print(err)
                 self.commandDelegate!.send(
                     pluginResult,
                     callbackId: command.callbackId
                 )
-        }
-        
+            }
     }
-    
+
     public func jsonEncode(_obj: Encodable) -> String {
         let codable = AnyEncodable(value: _obj)
         let encoder = JSONEncoder()
@@ -244,12 +290,12 @@ import TDLib
         let data = try! encoder.encode(codable)
         return String(data: data, encoding: .utf8)!
     }
-    
+
     struct AnyEncodable: Encodable {
         let value: Encodable
-        
+
         func encode(to encoder: Encoder) throws {
-            try self.value.encode(to: encoder)
+            try value.encode(to: encoder)
         }
     }
 }
