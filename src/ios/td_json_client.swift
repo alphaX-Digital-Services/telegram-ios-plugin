@@ -138,6 +138,73 @@ import TDLib
         }
     }
 
+    @objc(getMe:)
+    public func getMe(command: CDVInvokedUrlCommand) {
+        var pluginResult = CDVPluginResult(
+            status: CDVCommandStatus_ERROR,
+            messageAs: "ERROR GET ME"
+        )
+
+        coordinator!.send(GetMe())
+            .done { res in
+                print(res)
+                pluginResult = CDVPluginResult(
+                    status: CDVCommandStatus_OK,
+                    messageAs: self.jsonEncode(_obj: res)
+                )
+
+                self.commandDelegate!.send(
+                    pluginResult,
+                    callbackId: command.callbackId
+                )
+            }
+            .catch { err in
+                print(err)
+                pluginResult = CDVPluginResult(
+                    status: CDVCommandStatus_ERROR,
+                    messageAs: self.jsonEncode(_obj: err as! Encodable)
+                )
+
+                self.commandDelegate!.send(
+                    pluginResult,
+                    callbackId: command.callbackId
+                )
+            }
+    }
+    
+    @objc(createPrivateChat:)
+    public func createPrivateChat(command: CDVInvokedUrlCommand) {
+        var pluginResult = CDVPluginResult(
+            status: CDVCommandStatus_ERROR,
+            messageAs: "ERROR CREATING PRIVATE CHAT"
+        )
+        
+        coordinator!.send(CreatePrivateChat(userId: command.arguments?[0] as! Int32, force: false))
+            .done { res in
+                print(res)
+                pluginResult = CDVPluginResult(
+                    status: CDVCommandStatus_OK,
+                    messageAs: self.jsonEncode(_obj: res)
+                )
+                
+                self.commandDelegate!.send(
+                    pluginResult,
+                    callbackId: command.callbackId
+                )
+            }
+            .catch { err in
+                pluginResult = CDVPluginResult(
+                    status: CDVCommandStatus_ERROR,
+                    messageAs: self.jsonEncode(_obj: err as! Encodable)
+                )
+                
+                self.commandDelegate!.send(
+                    pluginResult,
+                    callbackId: command.callbackId
+                )
+            }
+    }
+
     @objc(sendMessage:)
     public func sendMessage(command: CDVInvokedUrlCommand) {
         var pluginResult = CDVPluginResult(
