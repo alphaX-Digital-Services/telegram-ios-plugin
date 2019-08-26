@@ -18,6 +18,10 @@ exports.getChatHistory = function (arg1, arg2, arg3, arg4, success, error) {
     exec(success, error, `${PLUGIN_NAME}`, 'getChatHistory', [arg1, arg2, arg3, arg4])
 }
 
+exports.sendMessage = function(arg1, arg2, arg3, arg4, arg5, success, error) {
+    exec(success, error, `${PLUGIN_NAME}`, 'sendMessage', [arg1, arg2, arg3, arg4, arg5])
+};
+
 exports.searchPublicChat = function (arg1, success, error) {
     exec(success, error, `${PLUGIN_NAME}`, 'searchPublicChat', [arg1])
 };

@@ -25,7 +25,7 @@ import TDLib
                 // Show code input screen.
                 print(".waitCode")
                 self.authState = "waitCode"
-                if isRegistered == false {
+                if isRegistered == true {
                     self.authState = "notRegistered"
                 }
             case .waitPassword(let passwordHint, _, _):
@@ -108,7 +108,7 @@ import TDLib
                         status: CDVCommandStatus_OK,
                         messageAs: self.jsonEncode(_obj: res)
                     )
-                    
+
                     self.commandDelegate!.send(
                         pluginResult,
                         callbackId: command.callbackId
@@ -120,7 +120,7 @@ import TDLib
                         status: CDVCommandStatus_ERROR,
                         messageAs: self.jsonEncode(_obj: err as! Encodable)
                     )
-                    
+
                     self.commandDelegate!.send(
                         pluginResult,
                         callbackId: command.callbackId
@@ -128,14 +128,46 @@ import TDLib
                 }
         } else {
             pluginResult = CDVPluginResult(
+                status: CDVCommandStatus_ERROR,
+                messageAs: "ERROR => MANY LETTERS IN SEARCH QUERY"
+            )
+            commandDelegate!.send(
+                pluginResult,
+                callbackId: command.callbackId
+            )
+        }
+    }
+
+    @objc(sendMessage:)
+    public func sendMessage(command: CDVInvokedUrlCommand) {
+        var pluginResult = CDVPluginResult(
             status: CDVCommandStatus_ERROR,
-            messageAs: "ERROR => MANY LETTERS IN SEARCH QUERY"
+            messageAs: "ERROR SENDING MESSAGE"
         )
-            self.commandDelegate!.send(
+
+        let text = FormattedText(text: command.arguments?[4] as! String, entities: [])
+
+        let inputMessage: InputMessageContent = .inputMessageText(text: text, disableWebPagePreview: false, clearDraft: true)
+
+        coordinator!.send(SendMessage(chatId: command.arguments![0] as! Int53, replyToMessageId: command.arguments![1] as! Int53, disableNotification: command.arguments![2] as! Bool, fromBackground: command.arguments![3] as! Bool, replyMarkup: nil, inputMessageContent: inputMessage))
+            .done { res in
+                print(res)
+                pluginResult = CDVPluginResult(
+                    status: CDVCommandStatus_OK,
+                    messageAs: self.jsonEncode(_obj: res)
+                )
+
+                self.commandDelegate!.send(
                     pluginResult,
                     callbackId: command.callbackId
                 )
-        }
+            }
+            .catch { err in
+                pluginResult = CDVPluginResult(
+                    status: CDVCommandStatus_ERROR,
+                    messageAs: self.jsonEncode(_obj: err as! Encodable)
+                )
+            }
     }
 
     @objc(getChats:)
@@ -171,7 +203,7 @@ import TDLib
     public func getChatHistory(command: CDVInvokedUrlCommand) {
         var pluginResult = CDVPluginResult(
             status: CDVCommandStatus_ERROR,
-            messageAs: "ERROR SENDING PHONE NUMBER"
+            messageAs: "ERROR GETTING CHAT HISTORY"
         )
 
         coordinator!.send(GetChatHistory(chatId: command.arguments![0] as! Int53, fromMessageId: command.arguments![1] as! Int53, offset: command.arguments![2] as! Int32, limit: command.arguments![3] as! Int32, onlyLocal: false))
