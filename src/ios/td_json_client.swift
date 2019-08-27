@@ -5,6 +5,8 @@ import TDLib
     var coordinator: Coordinator?
     var authState: String = "Undefined"
     var chats: [Int64]?
+    var newMessages: String?
+    var userStatus: String?
 
     @objc(create:)
     public func create(command: CDVInvokedUrlCommand) {
@@ -35,10 +37,25 @@ import TDLib
             case .ready:
                 // Show main view
                 print("READY")
-                self.authState = "ready"
+                self.authState = "ready"a
             case .loggingOut, .closing, .closed:
                 self.authState = "destroyed"
             }
+        }
+        
+        coordinator!.updateStream.subscribe(on: .main) { event in
+            switch event {
+            case .newMessage?:
+                print(event)
+                self.newMessages = self.jsonEncode(_obj: event)
+                print(self.newMessages)
+            case .userStatus?:
+                print(event)
+                self.userStatus = self.jsonEncode(_obj: event)
+            default:
+                break
+            }
+            
         }
 
         var pluginResult = CDVPluginResult(
@@ -79,6 +96,7 @@ import TDLib
 
     @objc(getAuthState:)
     public func getAuthState(command: CDVInvokedUrlCommand) {
+        
         let pluginResult = CDVPluginResult(
             status: CDVCommandStatus_OK,
             messageAs: authState

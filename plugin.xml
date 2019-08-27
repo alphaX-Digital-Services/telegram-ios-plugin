@@ -13,8 +13,10 @@
             </feature>
         </config-file>
         <carthage>
-            <cartfile>github "leoMehlig/TDLib-iOS"</cartfile>
+            <cartfile>github "leoMehlig/TDLib-iOS" "master"</cartfile>
             <framework src="TDLib.framework"/>
+            <framework src="PromiseKit.framework" />
+            <framework src="TDJSON.framework" />
         </carthage>
         <source-file src="src/ios/td_json_client.swift" />
     </platform>
