@@ -16,10 +16,18 @@ exports.getChats = function (arg1, arg2, arg3, success, error) {
 
 exports.getChatHistory = function (arg1, arg2, arg3, arg4, success, error) {
     exec(success, error, `${PLUGIN_NAME}`, 'getChatHistory', [arg1, arg2, arg3, arg4])
-}
+};
 
 exports.getMe = function (success, error) {
     exec(success, error, `${PLUGIN_NAME}`, 'getMe', [])
+};
+
+exports.getNewMessages = function (success, error) {
+    exec(success, error, `${PLUGIN_NAME}`, 'getNewMessages', [])
+};
+
+exports.getUserStatus = function (success, error) {
+    exec(success, error, `${PLUGIN_NAME}`, 'getUserStatus', [])
 };
 
 exports.createPrivateChat = function (arg1, success, error) {

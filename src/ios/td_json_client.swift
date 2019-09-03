@@ -5,8 +5,9 @@ import TDLib
     var coordinator: Coordinator?
     var authState: String = "Undefined"
     var chats: [Int64]?
-    var newMessages: String?
-    var userStatus: String?
+    var newMessages: [String]?
+    var userStatus: [String]?
+    
 
     @objc(create:)
     public func create(command: CDVInvokedUrlCommand) {
@@ -37,21 +38,23 @@ import TDLib
             case .ready:
                 // Show main view
                 print("READY")
-                self.authState = "ready"a
+                self.authState = "ready"
             case .loggingOut, .closing, .closed:
                 self.authState = "destroyed"
             }
         }
         
+        self.newMessages = []
+        self.userStatus = []
+        
         coordinator!.updateStream.subscribe(on: .main) { event in
             switch event {
             case .newMessage?:
-                print(event)
-                self.newMessages = self.jsonEncode(_obj: event)
-                print(self.newMessages)
+                let text = self.jsonEncode(_obj: event)
+                self.newMessages?.append(text)
             case .userStatus?:
-                print(event)
-                self.userStatus = self.jsonEncode(_obj: event)
+                let text = self.jsonEncode(_obj: event)
+                self.userStatus?.append(text)
             default:
                 break
             }
@@ -106,6 +109,38 @@ import TDLib
             pluginResult,
             callbackId: command.callbackId
         )
+    }
+    
+    @objc(getNewMessages:)
+    public func getNewMessages(command: CDVInvokedUrlCommand) {
+        
+        let pluginResult = CDVPluginResult(
+            status: CDVCommandStatus_OK,
+            messageAs: self.newMessages ?? []
+        )
+        
+        commandDelegate!.send(
+            pluginResult,
+            callbackId: command.callbackId
+        )
+        
+        
+        self.newMessages?.removeAll()
+    }
+    
+    @objc(getUserStatus:)
+    public func getUserStatus(command: CDVInvokedUrlCommand) {
+        let pluginResult = CDVPluginResult(
+            status: CDVCommandStatus_OK,
+            messageAs: self.userStatus ?? []
+        )
+        
+        commandDelegate!.send(
+            pluginResult,
+            callbackId: command.callbackId
+        )
+        
+        self.userStatus?.removeAll()
     }
 
     @objc(searchPublicChat:)
