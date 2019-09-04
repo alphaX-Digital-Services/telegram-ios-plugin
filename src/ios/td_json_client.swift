@@ -225,6 +225,40 @@ import TDLib
             }
     }
     
+    @objc(setUsername:)
+    public func setUsername(command: CDVInvokedUrlCommand) {
+        var pluginResult = CDVPluginResult(
+            status: CDVCommandStatus_ERROR,
+            messageAs: "ERROR SETTING USERNAME"
+        )
+        
+        coordinator!.send(SetUsername(username: command.arguments?[0] as! String))
+            .done { res in
+                print(res)
+                pluginResult = CDVPluginResult(
+                    status: CDVCommandStatus_OK,
+                    messageAs: self.jsonEncode(_obj: res)
+                )
+                
+                self.commandDelegate!.send(
+                    pluginResult,
+                    callbackId: command.callbackId
+                )
+            }
+            .catch { err in
+                print(err)
+                pluginResult = CDVPluginResult(
+                    status: CDVCommandStatus_ERROR,
+                    messageAs: self.jsonEncode(_obj: err as! Encodable)
+                )
+                
+                self.commandDelegate!.send(
+                    pluginResult,
+                    callbackId: command.callbackId
+                )
+            }
+    }
+    
     @objc(createPrivateChat:)
     public func createPrivateChat(command: CDVInvokedUrlCommand) {
         var pluginResult = CDVPluginResult(
