@@ -23,7 +23,7 @@ exports.getMe = function (success, error) {
 };
 
 exports.setUsername = function (arg1, success, error) {
-    exec(success, error `${PLUGIN_NAME}`, 'setUsername', [arg1])
+    exec(success, error, `${PLUGIN_NAME}`, 'setUsername', [arg1])
 };
 
 exports.getNewMessages = function (success, error) {
