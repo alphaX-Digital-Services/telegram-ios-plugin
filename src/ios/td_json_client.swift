@@ -28,7 +28,7 @@ import TDLib
                 // Show code input screen.
                 print(".waitCode")
                 self.authState = "waitCode"
-                if isRegistered == true {
+                if isRegistered == false {
                     self.authState = "notRegistered"
                 }
             case .waitPassword(let passwordHint, _, _):
