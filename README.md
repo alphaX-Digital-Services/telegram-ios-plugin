@@ -1,7 +1,7 @@
 # Telegram (TDLib) iOS plugin for Cordova
 Basically used [TDLib-iOS](https://github.com/leoMehlig/TDLib-iOS).
 
-*Plugin not realize all TDLib methods. All available methods able to see in .js file. Other methods will be provided soon*
+*Plugin does not realize all TDLib methods. All available methods are able to be seen in .js file. Other methods will be provided soon, but feel free to fork this repo*
 
 *List of methods with description will be provided soon*
 
